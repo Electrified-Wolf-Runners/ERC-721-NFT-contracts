@@ -7,7 +7,7 @@ import "@chainlink/contracts/src/v0.6/VRFConsumerBase.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
-contract MyHero is ERC721, VRFConsumerBase, Ownable {
+contract EWO_Character_NFT is ERC721, VRFConsumerBase, Ownable {
     using SafeMath for uint256;
     using Strings for string;
 
@@ -20,13 +20,12 @@ contract MyHero is ERC721, VRFConsumerBase, Ownable {
     // rinkeby: 0x01BE23585060835E02B77ef475b0Cc51aA1e0709a
 
     struct Character {
+        uint256 speed;
         uint256 strength;
-        uint256 dexterity;
-        uint256 constitution;
-        uint256 intelligence;
-        uint256 wisdom;
+        uint256 agility;
         uint256 charisma;
-        uint256 experience;
+        uint256 power;
+        uint256 intelligence;
         string name;
     }
 
@@ -47,7 +46,7 @@ contract MyHero is ERC721, VRFConsumerBase, Ownable {
     constructor(address _VRFCoordinator, address _LinkToken, bytes32 _keyhash)
         public
         VRFConsumerBase(_VRFCoordinator, _LinkToken)
-        ERC721("MyHero", "D&D")
+        ERC721("EWO_Rush", "EWO")
     {   
         VRFCoordinator = _VRFCoordinator;
         LinkToken = _LinkToken;
@@ -85,32 +84,27 @@ contract MyHero is ERC721, VRFConsumerBase, Ownable {
         override
     {
         uint256 newId = characters.length;
-        uint256 strength = (randomNumber % 100);
-        uint256 dexterity = ((randomNumber % 10000) / 100 );
-        uint256 constitution = ((randomNumber % 1000000) / 10000 );
-        uint256 intelligence = ((randomNumber % 100000000) / 1000000 );
-        uint256 wisdom = ((randomNumber % 10000000000) / 100000000 );
-        uint256 charisma = ((randomNumber % 1000000000000) / 10000000000);
-        uint256 experience = 0;
+        uint256 speed = (randomNumber % 100) + 1;
+        uint256 strength = ((randomNumber % 10000) / 100 ) + 1;
+        uint256 agility = ((randomNumber % 1000000) / 10000 ) + 1;
+        uint256 charisma = ((randomNumber % 100000000) / 1000000 ) + 1;
+        uint256 power = ((randomNumber % 10000000000) / 100000000 ) + 1;
+        uint256 intelligence = ((randomNumber % 1000000000000) / 10000000000) + 1;
 
         characters.push(
             Character(
+                speed,
                 strength,
-                dexterity,
-                constitution,
-                intelligence,
-                wisdom,
+                agility,
                 charisma,
-                experience,
+                power,
+                intelligence,
                 requestToCharacterName[requestId]
             )
         );
         _safeMint(requestToSender[requestId], newId);
     }
 
-    function getLevel(uint256 tokenId) public view returns (uint256) {
-        return sqrt(characters[tokenId].experience);
-    }
 
     function getNumberOfCharacters() public view returns (uint256) {
         return characters.length; 
@@ -121,16 +115,12 @@ contract MyHero is ERC721, VRFConsumerBase, Ownable {
         view
         returns (
             string memory,
-            uint256,
-            uint256,
             uint256
         )
     {
         return (
             characters[tokenId].name,
-            characters[tokenId].strength + characters[tokenId].dexterity + characters[tokenId].constitution + characters[tokenId].intelligence + characters[tokenId].wisdom + characters[tokenId].charisma,
-            getLevel(tokenId),
-            characters[tokenId].experience
+            characters[tokenId].speed + characters[tokenId].strength + characters[tokenId].agility + characters[tokenId].charisma + characters[tokenId].power + characters[tokenId].intelligence
         );
     }
 
@@ -143,27 +133,25 @@ contract MyHero is ERC721, VRFConsumerBase, Ownable {
             uint256,
             uint256,
             uint256,
-            uint256,
             uint256
         )
     {
         return (
+            characters[tokenId].speed,
             characters[tokenId].strength,
-            characters[tokenId].dexterity,
-            characters[tokenId].constitution,
-            characters[tokenId].intelligence,
-            characters[tokenId].wisdom,
+            characters[tokenId].agility,
             characters[tokenId].charisma,
-            characters[tokenId].experience
+            characters[tokenId].power,
+            characters[tokenId].intelligence
         );
     }
 
-    function sqrt(uint256 x) internal view returns (uint256 y) {
-        uint256 z = (x + 1) / 2;
-        y = x;
-        while (z < y) {
-            y = z;
-            z = (x / z + z) / 2;
-        }
-    }
+    // function sqrt(uint256 x) internal view returns (uint256 y) {
+    //     uint256 z = (x + 1) / 2;
+    //     y = x;
+    //     while (z < y) {
+    //         y = z;
+    //         z = (x / z + z) / 2;
+    //     }
+    // }
 }

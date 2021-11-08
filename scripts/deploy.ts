@@ -9,7 +9,7 @@ async function main() {
   const deployerAddress = await deployer.getAddress();
   console.log("Deploying cryptoGogo with address:", deployerAddress);
 
-  const myHeroFactory = await ethers.getContractFactory("MyHero");
+  const myHeroFactory = await ethers.getContractFactory("EWO_Character_NFT");
   const myHero = await myHeroFactory.deploy(
   vrf,
   link,
